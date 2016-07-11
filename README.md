@@ -15,7 +15,9 @@ Using android mobile to establish a connection with your Mac via Bluetooth low-e
 - Unlock when you resume Mac by pressing a key.
 - Unlock when you manually lock mac with clicking "lock screen" by keychain access in status bar. [(Choose Keychain Access > Preferences, then click General. Select Show keychain status in menu bar.)](https://support.apple.com/kb/PH20121?viewlocale=en_US&locale=en_US)
 
-
+Demo
+--------------
+[![Demo](https://github.com/pinetum/AirUnlock-for-Android/raw/master/screenshots/demo.gif)](https://www.youtube.com/watch?v=Ma4Z6b1Ghn0)
 
 Requirement
 --------------
