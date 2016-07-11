@@ -11,7 +11,7 @@ Using android mobile establish a connection with your Mac via Bluetooth low-ener
 - Send the UUID for lock/unlock Macbook (other people can't control your mac)
 - Without any internet access
 - Authorization with fingerprint
-- Wake and unlock whebn mac is sleeping (can not work when first boot-up and manually lock by clicking your name on the status bar and then clicking 'Login Window....')
+- Wake and unlock when mac is sleeping (can not work when first boot-up and manually lock by clicking your name on the status bar, and then clicking 'Login Window....')
 - Unlock when you resume Mac by pressing a key
 - Unlock when you manually lock mac with clicking "lock screen" by keychain access in status bar [(Choose Keychain Access > Preferences, then click General. Select Show keychain status in menu bar.)](https://support.apple.com/kb/PH20121?viewlocale=en_US&locale=en_US)
 
