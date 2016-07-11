@@ -9,7 +9,7 @@ Establish a connection with your Mac via Bluetooth low-energy (BLE), wireless co
 #### Features
 - Store the password in Mac system keychain
 - Send the UUID for lock/unlock Macbook (other people can't control your mac)
-- With out any internet access
+- Without any internet access
 - Authorization with fingerprint
 - Wake and unlock whebn mac is sleeping (can not work when first boot-up and manually lock by clicking your name on the status bar and then clicking 'Login Window....')
 - Unlock when you resume Mac by pressing a key
