@@ -29,7 +29,7 @@ Getting Started
 - [Download AirUnlock for MacOS.](https://github.com/pinetum/AirUnlock-for-Mac/releases/download/0.4/AirUnlock_mac_0.4.zip) ([or build from source](https://github.com/pinetum/AirUnlock-for-Mac))
 - [Download AirUnlock Android client.](https://github.com/pinetum/AirUnlock-for-Android/releases/download/1.0/AirUnlock_1.0.zip) ([or build from source](https://github.com/pinetum/AirUnlock-for-Android))
 - Launch AirUnlock on mac and turn on Bluetooth.
-- Set up your passord.
+- Set up your password.
 - Generate a QR-code for android mobile.
 - Launch AirUnlock on Android and scan QR-code for first time.
 - Control buttons will show in Notification.
