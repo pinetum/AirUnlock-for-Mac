@@ -63,32 +63,11 @@ void *kContextActivePanel = &kContextActivePanel;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-    // Install icon into the menu bar
-    const NSString *btAddress = [[IOBluetoothHostController defaultController] addressAsString];
     
     // inital controler and BLE peripheral manager
     self.menubarController = [[MenubarController alloc] init];
     self.peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil];
     
-    // inital unlock setting for generate QR code
-    // QR code encode content is BT's MAC Address, unlock Keyword, lock keyword
-    // for exampele "AA-AA-AA-AA-AA-AA,unlock!,lock!"
-    // we need to save these to avoid user scan qrcode when app relaunch
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-
-    NSDictionary *appDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:
-                                btAddress, @"ADDRESS",
-                                 @"lock", @"LOCK",
-                                 @"unlock",@"UNLOCK",
-                                 nil];
-    [defaults registerDefaults:appDefaults];
-    
-    // user's default keychain
-    self.panelController.keychain = NULL;
-    // inital keychain information
-    self.panelController.keyChain_accountName = @"AirUnlock";
-    self.panelController.keyChain_serviceName = @"AirUnlock";
-    self.panelController.keyChain_passwordData = @"AirUnlock";
     
     // check keychain acess permission
     while(true){
@@ -201,6 +180,28 @@ void *kContextActivePanel = &kContextActivePanel;
     
     if (CBPeripheralManagerStatePoweredOn == peripheral.state) {
         //當藍牙打開
+        // inital unlock setting for generate QR code
+        // QR code encode content is BT's MAC Address, unlock Keyword, lock keyword
+        // for exampele "AA-AA-AA-AA-AA-AA,unlock!,lock!"
+        // we need to save these to avoid user scan qrcode when app relaunch
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        
+        const NSString *btAddress = [[IOBluetoothHostController defaultController] addressAsString];
+        
+        NSDictionary *appDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:
+                                     btAddress, @"ADDRESS",
+                                     @"lock", @"LOCK",
+                                     @"unlock",@"UNLOCK",
+                                     nil];
+        [defaults registerDefaults:appDefaults];
+        
+        // user's default keychain
+        self.panelController.keychain = NULL;
+        // inital keychain information
+        self.panelController.keyChain_accountName = @"AirUnlock";
+        self.panelController.keyChain_serviceName = @"AirUnlock";
+        self.panelController.keyChain_passwordData = @"AirUnlock";
+
         [peripheral startAdvertising:@{
                                        CBAdvertisementDataLocalNameKey: @"Air Unlock",
                                        CBAdvertisementDataServiceUUIDsKey: @[[CBUUID UUIDWithString:@"BD0F6577-4A38-4D71-AF1B-4E8F57708080"]]
@@ -215,9 +216,22 @@ void *kContextActivePanel = &kContextActivePanel;
         
     }else {
         // 當藍芽被關地的時候或其他狀態
+        
         [peripheral stopAdvertising];
         [peripheral removeAllServices];
     }
+    
+    if(CBPeripheralManagerStatePoweredOff == peripheral.state){
+        //show up turn on bt alert
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setAlertStyle:NSWarningAlertStyle];
+        [alert addButtonWithTitle:@"ok"];
+        [alert setMessageText:@"Bluetooth Powered off"];
+        [alert setInformativeText:@"AirUnlock needs to turn on Bluetooth for normal operation. \nPlease turn on Bluetooth."];
+        [alert setAlertStyle:NSWarningAlertStyle];
+        [alert runModal];
+    }
+    
 }
 
 
