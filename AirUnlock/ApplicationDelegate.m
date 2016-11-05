@@ -7,6 +7,7 @@
 #import <IOKit/pwr_mgt/IOPMLibDefs.h>
 #import <IOKit/pwr_mgt/IOPMKeys.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 
 #import <Availability.h>
 

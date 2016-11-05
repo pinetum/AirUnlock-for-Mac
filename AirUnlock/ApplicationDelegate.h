@@ -1,7 +1,7 @@
 #import "MenubarController.h"
 #import "PanelController.h"
 #import <IOBluetooth/IOBluetooth.h>
-
+#import <CoreBluetooth/CoreBluetooth.h>
 
 
 extern const NSString *lockScript;

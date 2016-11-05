@@ -255,7 +255,7 @@
 
 - (IBAction)btn_generateQR:(id)sender {
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    NSString* btAdderss = [defaults stringForKey:@"ADDRESS"];
+    NSString* btAddress = [defaults stringForKey:@"ADDRESS"];
     
     NSString *randString = [[NSUUID UUID] UUIDString];
     
@@ -264,7 +264,7 @@
     [defaults setObject:lockKeyword forKey:@"LOCK"];
     [defaults setObject:unlockKeyword forKey:@"UNLOCK"];
     
-    NSString *encodeString =[NSString stringWithFormat:@"%@,%@,%@", btAdderss, unlockKeyword, lockKeyword];
+    NSString *encodeString =[NSString stringWithFormat:@"%@,%@,%@", btAddress, unlockKeyword, lockKeyword];
     NSLog(encodeString);
     
     NSError *error = nil;
