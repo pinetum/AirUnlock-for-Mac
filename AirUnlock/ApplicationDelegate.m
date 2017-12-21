@@ -285,7 +285,7 @@ void *kContextActivePanel = &kContextActivePanel;
 //                                    CFSTR(kIOPMAutoWake));
             
                 
-            // 10.10-10.11 can work for wake up with out privileges..
+            // 10.10-10.12 can work for wake up with out privileges..
             IOPMAssertionID assertionID;
             IOPMAssertionDeclareUserActivity(CFSTR("AirUnlock"), kIOPMUserActiveLocal, &assertionID);
             sleep(1);
