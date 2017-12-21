@@ -62,10 +62,20 @@ void *kContextActivePanel = &kContextActivePanel;
     self.peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil];
     
     
-    // check keychain acess permission
-    while(true){
-        OSStatus status = [self checkKeyChainAccess];
-        if(status == errSecAuthFailed)
+    // check keychain access permission
+        void *password = NULL;
+        UInt32 nLength;
+        OSStatus status = SecKeychainFindGenericPassword(NULL,
+                                                         (UInt32)[self.panelController.keyChain_serviceName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+                                                         self.panelController.keyChain_serviceName.UTF8String,
+                                                         (UInt32)[self.panelController.keyChain_accountName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+                                                         self.panelController.keyChain_accountName.UTF8String,
+                                                         &nLength,&password,
+                                                         NULL);
+        if(status == noErr) {
+            self.panelController.keyChain_passwordData = [[NSString alloc] initWithBytes:password length:nLength encoding:NSUTF8StringEncoding];
+        }
+        else if(status == errSecAuthFailed)
         {
             
             [NSApp activateIgnoringOtherApps:YES];
@@ -92,12 +102,10 @@ void *kContextActivePanel = &kContextActivePanel;
             if (button == NSAlertFirstButtonReturn) {
                 [self.panelController showUpdatePasswordDialog];
             }
-            break;
         }
         else{
-            break;
         }
-    }
+    if (password) SecKeychainItemFreeContent(NULL, password);  // Free memory
     
     NSDistributedNotificationCenter *center = [NSDistributedNotificationCenter defaultCenter];
     [center addObserver:self
@@ -117,23 +125,7 @@ void *kContextActivePanel = &kContextActivePanel;
 
 
 }
-- (OSStatus)checkKeyChainAccess{
-    char *password = NULL;
-    uint32 nLength;
-    OSStatus status = SecKeychainFindGenericPassword(NULL,
-                                                     (int)[self.panelController.keyChain_serviceName lengthOfBytesUsingEncoding:NSUTF8StringEncoding], self.panelController.keyChain_serviceName.UTF8String,
-                                                     (int)[self.panelController.keyChain_accountName lengthOfBytesUsingEncoding:NSUTF8StringEncoding], self.panelController.keyChain_accountName.UTF8String,
-                                                     &nLength,&password,
-                                                     NULL);
-    if(status == noErr)
-        self.panelController.keyChain_passwordData = [NSString stringWithFormat:@"%s", password ];
-    else
-        NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
 
-    
-    return status;
-
-}
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
 {
     // Explicitly remove the icon from the menu bar
