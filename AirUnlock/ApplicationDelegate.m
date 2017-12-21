@@ -110,6 +110,7 @@ void *kContextActivePanel = &kContextActivePanel;
             }
         }
         else{
+            NSLog(@"%@", (__bridge_transfer NSString *)SecCopyErrorMessageString(status, NULL)); // User canceled the operation.
         }
     if (password) SecKeychainItemFreeContent(NULL, password);  // Free memory
     

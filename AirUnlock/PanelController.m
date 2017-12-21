@@ -331,7 +331,7 @@
             }
             
             else
-                NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
+                NSLog(@"%@", (__bridge_transfer NSString *)SecCopyErrorMessageString(status, NULL));
         }
         else if (status == errSecItemNotFound){ // not exist - add it
             OSStatus status= SecKeychainAddGenericPassword(self.keychain,
@@ -345,10 +345,10 @@
             if(status == noErr)
                 NSLog(@"Password saved");
             else
-                NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
+                NSLog(@"%@", (__bridge_transfer NSString *)SecCopyErrorMessageString(status, NULL));
         }
         else
-            NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
+            NSLog(@"%@", (__bridge_transfer NSString *)SecCopyErrorMessageString(status, NULL));
         
         
     }
