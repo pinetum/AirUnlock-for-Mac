@@ -11,12 +11,6 @@
 
 #import <Availability.h>
 
-const NSString *lockScript = @"tell application \"System Events\"\n\
-tell security preferences\n\
-set require password to wake to true\n\
-end tell\n\
-end tell\n\
-tell application \"System Events\" to sleep";
 
 
 @interface ApplicationDelegate ()
@@ -269,8 +263,15 @@ void *kContextActivePanel = &kContextActivePanel;
         NSString* unlockKeyword = [[NSUserDefaults standardUserDefaults] stringForKey:@"UNLOCK"];
         if([conetnt isEqualToString:lockKeyword] && !self.bScreenLocked){
             NSLog(@"lock screen!");
-            NSAppleScript *locker = [[NSAppleScript alloc] initWithSource:lockScript];
-            [locker executeAndReturnError:nil];
+            SACLockScreenImmediate();
+            //10.10-10.12
+            //NSBundle *bundle = [NSBundle bundleWithPath:@"/Applications/Utilities/Keychain Access.app/Contents/Resources/Keychain.menu"];
+            //Class principalClass = [bundle principalClass];
+            //id instance = [[principalClass alloc] init];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            //[instance performSelector:NSSelectorFromString(@"_lockScreenMenuHit:") withObject:nil];
+#pragma clang diagnostic pop
         }
         else if ([conetnt isEqualToString:unlockKeyword] && self.bScreenLocked){
             NSLog(@"unlock screen!");
