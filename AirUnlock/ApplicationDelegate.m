@@ -61,6 +61,12 @@ void *kContextActivePanel = &kContextActivePanel;
     self.menubarController = [[MenubarController alloc] init];
     self.peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil];
     
+    // user's default keychain
+    self.panelController.keychain = NULL;
+    // inital keychain information
+    self.panelController.keyChain_accountName = @"AirUnlock";
+    self.panelController.keyChain_serviceName = @"AirUnlock";
+    self.panelController.keyChain_passwordData = @"AirUnlock";
     
     // check keychain access permission
         void *password = NULL;
@@ -182,12 +188,6 @@ void *kContextActivePanel = &kContextActivePanel;
                                      nil];
         [defaults registerDefaults:appDefaults];
         
-        // user's default keychain
-        self.panelController.keychain = NULL;
-        // inital keychain information
-        self.panelController.keyChain_accountName = @"AirUnlock";
-        self.panelController.keyChain_serviceName = @"AirUnlock";
-        self.panelController.keyChain_passwordData = @"AirUnlock";
 
         [peripheral startAdvertising:@{
                                        CBAdvertisementDataLocalNameKey: @"Air Unlock",
