@@ -328,7 +328,7 @@
                                                                            self.keyChain_passwordData.length,
                                                                            self.keyChain_passwordData.cString);
             if(ModifStatus == noErr){
-                NSLog(@"Passowd saved");
+                NSLog(@"Password saved");
             }
             
             else
@@ -345,7 +345,7 @@
 
                                                            NULL);
             if(status == noErr)
-                NSLog(@"Passowd saved");
+                NSLog(@"Password saved");
             else
                 NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
         }
