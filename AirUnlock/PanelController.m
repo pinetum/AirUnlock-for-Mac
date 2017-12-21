@@ -307,10 +307,9 @@
     [input setStringValue:@""];
     [alert setAccessoryView:input];
     [alert setIcon:[NSImage imageNamed:@"mbp-un"]];
+    [[alert window] setInitialFirstResponder:input];
     
-    [[self window] makeFirstResponder:input];
     NSInteger button = [alert runModal];
-    [[self window] makeFirstResponder:self];
     if (button == NSAlertFirstButtonReturn && [input.stringValue length]!=0 ) {
         self.keyChain_passwordData = input.stringValue;
         SecKeychainItemRef itemRef = NULL;
