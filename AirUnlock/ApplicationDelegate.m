@@ -75,6 +75,7 @@ void *kContextActivePanel = &kContextActivePanel;
         if(status == errSecAuthFailed)
         {
             
+            [NSApp activateIgnoringOtherApps:YES];
             NSAlert *alert = [[NSAlert alloc] init];
             [alert setMessageText:@"We need permission to store your password in system key chain."];
             [alert addButtonWithTitle:@"Ok"];
@@ -87,6 +88,7 @@ void *kContextActivePanel = &kContextActivePanel;
             }
         }
         else if(status == errSecItemNotFound){
+            [NSApp activateIgnoringOtherApps:YES];
             NSAlert *alert = [[NSAlert alloc] init];
             [alert setMessageText:@"You have not set a password to unlock."];
             [alert addButtonWithTitle:@"Set password"];

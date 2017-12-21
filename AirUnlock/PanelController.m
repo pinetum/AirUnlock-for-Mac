@@ -295,6 +295,7 @@
 
 
 -(void)showUpdatePasswordDialog{
+    [NSApp activateIgnoringOtherApps:YES];
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText:@"Password will save in System Keychain"];
     [alert addButtonWithTitle:@"Save"];
