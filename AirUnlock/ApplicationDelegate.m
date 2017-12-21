@@ -272,6 +272,7 @@ void *kContextActivePanel = &kContextActivePanel;
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
             //[instance performSelector:NSSelectorFromString(@"_lockScreenMenuHit:") withObject:nil];
 #pragma clang diagnostic pop
+            sleep(3);
         }
         else if ([conetnt isEqualToString:unlockKeyword] && self.bScreenLocked){
             NSLog(@"unlock screen!");
