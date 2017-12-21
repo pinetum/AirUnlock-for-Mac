@@ -265,7 +265,7 @@
     [defaults setObject:unlockKeyword forKey:@"UNLOCK"];
     
     NSString *encodeString =[NSString stringWithFormat:@"%@,%@,%@", btAddress, unlockKeyword, lockKeyword];
-    NSLog(encodeString);
+    NSLog(@"%@", encodeString);
     
     NSError *error = nil;
     ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
@@ -283,7 +283,7 @@
         
     } else {
         NSString *errorMessage = [error localizedDescription];
-        NSLog(errorMessage);
+        NSLog(@"%@", errorMessage);
     }
     
     
