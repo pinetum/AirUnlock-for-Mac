@@ -5,6 +5,7 @@
 
 
 extern void SACLockScreenImmediate();
+extern void IOBluetoothPreferenceSetControllerPowerState();
 @interface ApplicationDelegate : NSObject <NSApplicationDelegate, PanelControllerDelegate, CBPeripheralManagerDelegate>
 @property AuthorizationRef authRef;
 

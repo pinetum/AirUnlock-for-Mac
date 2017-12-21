@@ -131,6 +131,25 @@ void *kContextActivePanel = &kContextActivePanel;
 
 
 
+    if(kBluetoothHCIPowerStateOFF == [[IOBluetoothHostController defaultController] powerState]){
+        //show up turn on bt alert
+        [NSApp activateIgnoringOtherApps:YES];
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setAlertStyle:NSWarningAlertStyle];
+        [alert setMessageText:@"Bluetooth Hardware is Off"];
+        [alert setInformativeText:@"In order to use AirUnlock, the Bluetooth hardware must be on."];
+        [alert addButtonWithTitle:@"Turn Bluetooth On"];
+        [alert addButtonWithTitle:@"Leave Bluetooth Off"];
+        [alert setAlertStyle:NSWarningAlertStyle];
+        //[alert setShowsSuppressionButton:YES];
+        NSModalResponse button = [alert runModal];
+        
+        if (button == NSAlertFirstButtonReturn) {
+            IOBluetoothPreferenceSetControllerPowerState(1);
+            //[[(id)NSClassFromString(@"IOBluetoothPreferences") performSelector:NSSelectorFromString(@"sharedPreferences") withObject:nil] performSelector:NSSelectorFromString(@"_setPoweredOn:") withObject:[NSNumber numberWithBool:YES]];
+            //https://github.com/onmyway133/Runtime-Headers/blob/master/macOS/10.12/IOBluetooth.framework/IOBluetoothPreferences.h
+        }
+    }
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
@@ -209,16 +228,6 @@ void *kContextActivePanel = &kContextActivePanel;
         [peripheral removeAllServices];
     }
     
-    if(CBPeripheralManagerStatePoweredOff == peripheral.state){
-        //show up turn on bt alert
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert setAlertStyle:NSWarningAlertStyle];
-        [alert addButtonWithTitle:@"ok"];
-        [alert setMessageText:@"Bluetooth Powered off"];
-        [alert setInformativeText:@"AirUnlock needs to turn on Bluetooth for normal operation. \nPlease turn on Bluetooth."];
-        [alert setAlertStyle:NSWarningAlertStyle];
-        [alert runModal];
-    }
     
 }
 
