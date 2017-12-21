@@ -5,7 +5,6 @@
 
 
 extern const NSString *lockScript;
-extern const NSString *unlockScriptBase;
 @interface ApplicationDelegate : NSObject <NSApplicationDelegate, PanelControllerDelegate, CBPeripheralManagerDelegate>
 @property AuthorizationRef authRef;
 

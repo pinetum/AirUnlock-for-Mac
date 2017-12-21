@@ -17,7 +17,6 @@ set require password to wake to true\n\
 end tell\n\
 end tell\n\
 tell application \"System Events\" to sleep";
-const NSString *unlockScriptBase = @"tell application \"System Events\" to keystroke \"%@\" \ntell application \"System Events\" to keystroke return";
 
 
 @interface ApplicationDelegate ()
@@ -291,7 +290,7 @@ void *kContextActivePanel = &kContextActivePanel;
             IOPMAssertionID assertionID;
             IOPMAssertionDeclareUserActivity(CFSTR("AirUnlock"), kIOPMUserActiveLocal, &assertionID);
             sleep(1);
-            NSString *unlockScript = [NSString stringWithFormat:unlockScriptBase, self.panelController.keyChain_passwordData];
+            NSString *unlockScript = [NSString stringWithFormat:@"tell application \"System Events\" \nkeystroke \"%@\" \nkeystroke return \nend tell", self.panelController.keyChain_passwordData];
             NSAppleScript *unlocker = [[NSAppleScript alloc] initWithSource:unlockScript];
             //NSLog(unlockScript);
             [unlocker executeAndReturnError:nil];
