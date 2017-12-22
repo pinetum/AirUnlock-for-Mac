@@ -4,8 +4,8 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 
 
-extern const NSString *lockScript;
-extern const NSString *unlockScriptBase;
+extern void SACLockScreenImmediate();
+extern void IOBluetoothPreferenceSetControllerPowerState();
 @interface ApplicationDelegate : NSObject <NSApplicationDelegate, PanelControllerDelegate, CBPeripheralManagerDelegate>
 @property AuthorizationRef authRef;
 

@@ -11,13 +11,6 @@
 
 #import <Availability.h>
 
-const NSString *lockScript = @"tell application \"System Events\"\n\
-tell security preferences\n\
-set require password to wake to true\n\
-end tell\n\
-end tell\n\
-tell application \"System Events\" to sleep";
-const NSString *unlockScriptBase = @"tell application \"System Events\" to keystroke \"%@\" \ntell application \"System Events\" to keystroke return";
 
 
 @interface ApplicationDelegate ()
@@ -68,13 +61,30 @@ void *kContextActivePanel = &kContextActivePanel;
     self.menubarController = [[MenubarController alloc] init];
     self.peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil];
     
+    // user's default keychain
+    self.panelController.keychain = NULL;
+    // inital keychain information
+    self.panelController.keyChain_accountName = @"AirUnlock";
+    self.panelController.keyChain_serviceName = @"AirUnlock";
+    self.panelController.keyChain_passwordData = @"AirUnlock";
     
-    // check keychain acess permission
-    while(true){
-        OSStatus status = [self checkKeyChainAccess];
-        if(status == errSecAuthFailed)
+    // check keychain access permission
+        void *password = NULL;
+        UInt32 nLength;
+        OSStatus status = SecKeychainFindGenericPassword(NULL,
+                                                         (UInt32)[self.panelController.keyChain_serviceName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+                                                         self.panelController.keyChain_serviceName.UTF8String,
+                                                         (UInt32)[self.panelController.keyChain_accountName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+                                                         self.panelController.keyChain_accountName.UTF8String,
+                                                         &nLength,&password,
+                                                         NULL);
+        if(status == noErr) {
+            self.panelController.keyChain_passwordData = [[NSString alloc] initWithBytes:password length:nLength encoding:NSUTF8StringEncoding];
+        }
+        else if(status == errSecAuthFailed)
         {
             
+            [NSApp activateIgnoringOtherApps:YES];
             NSAlert *alert = [[NSAlert alloc] init];
             [alert setMessageText:@"We need permission to store your password in system key chain."];
             [alert addButtonWithTitle:@"Ok"];
@@ -87,6 +97,7 @@ void *kContextActivePanel = &kContextActivePanel;
             }
         }
         else if(status == errSecItemNotFound){
+            [NSApp activateIgnoringOtherApps:YES];
             NSAlert *alert = [[NSAlert alloc] init];
             [alert setMessageText:@"You have not set a password to unlock."];
             [alert addButtonWithTitle:@"Set password"];
@@ -97,12 +108,11 @@ void *kContextActivePanel = &kContextActivePanel;
             if (button == NSAlertFirstButtonReturn) {
                 [self.panelController showUpdatePasswordDialog];
             }
-            break;
         }
         else{
-            break;
+            NSLog(@"%@", (__bridge_transfer NSString *)SecCopyErrorMessageString(status, NULL)); // User canceled the operation.
         }
-    }
+    if (password) SecKeychainItemFreeContent(NULL, password);  // Free memory
     
     NSDistributedNotificationCenter *center = [NSDistributedNotificationCenter defaultCenter];
     [center addObserver:self
@@ -121,24 +131,27 @@ void *kContextActivePanel = &kContextActivePanel;
 
 
 
+    if(kBluetoothHCIPowerStateOFF == [[IOBluetoothHostController defaultController] powerState]){
+        //show up turn on bt alert
+        [NSApp activateIgnoringOtherApps:YES];
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert setAlertStyle:NSWarningAlertStyle];
+        [alert setMessageText:@"Bluetooth Hardware is Off"];
+        [alert setInformativeText:@"In order to use AirUnlock, the Bluetooth hardware must be on."];
+        [alert addButtonWithTitle:@"Turn Bluetooth On"];
+        [alert addButtonWithTitle:@"Leave Bluetooth Off"];
+        [alert setAlertStyle:NSWarningAlertStyle];
+        //[alert setShowsSuppressionButton:YES];
+        NSModalResponse button = [alert runModal];
+        
+        if (button == NSAlertFirstButtonReturn) {
+            IOBluetoothPreferenceSetControllerPowerState(1);
+            //[[(id)NSClassFromString(@"IOBluetoothPreferences") performSelector:NSSelectorFromString(@"sharedPreferences") withObject:nil] performSelector:NSSelectorFromString(@"_setPoweredOn:") withObject:[NSNumber numberWithBool:YES]];
+            //https://github.com/onmyway133/Runtime-Headers/blob/master/macOS/10.12/IOBluetooth.framework/IOBluetoothPreferences.h
+        }
+    }
 }
-- (OSStatus)checkKeyChainAccess{
-    char *password = NULL;
-    uint32 nLength;
-    OSStatus status = SecKeychainFindGenericPassword(NULL,
-                                                     (int)[self.panelController.keyChain_serviceName lengthOfBytesUsingEncoding:NSUTF8StringEncoding], self.panelController.keyChain_serviceName.UTF8String,
-                                                     (int)[self.panelController.keyChain_accountName lengthOfBytesUsingEncoding:NSUTF8StringEncoding], self.panelController.keyChain_accountName.UTF8String,
-                                                     &nLength,&password,
-                                                     NULL);
-    if(status == noErr)
-        self.panelController.keyChain_passwordData = [NSString stringWithFormat:@"%s", password ];
-    else
-        NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
 
-    
-    return status;
-
-}
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
 {
     // Explicitly remove the icon from the menu bar
@@ -195,12 +208,6 @@ void *kContextActivePanel = &kContextActivePanel;
                                      nil];
         [defaults registerDefaults:appDefaults];
         
-        // user's default keychain
-        self.panelController.keychain = NULL;
-        // inital keychain information
-        self.panelController.keyChain_accountName = @"AirUnlock";
-        self.panelController.keyChain_serviceName = @"AirUnlock";
-        self.panelController.keyChain_passwordData = @"AirUnlock";
 
         [peripheral startAdvertising:@{
                                        CBAdvertisementDataLocalNameKey: @"Air Unlock",
@@ -221,16 +228,6 @@ void *kContextActivePanel = &kContextActivePanel;
         [peripheral removeAllServices];
     }
     
-    if(CBPeripheralManagerStatePoweredOff == peripheral.state){
-        //show up turn on bt alert
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert setAlertStyle:NSWarningAlertStyle];
-        [alert addButtonWithTitle:@"ok"];
-        [alert setMessageText:@"Bluetooth Powered off"];
-        [alert setInformativeText:@"AirUnlock needs to turn on Bluetooth for normal operation. \nPlease turn on Bluetooth."];
-        [alert setAlertStyle:NSWarningAlertStyle];
-        [alert runModal];
-    }
     
 }
 
@@ -268,8 +265,16 @@ void *kContextActivePanel = &kContextActivePanel;
         NSString* unlockKeyword = [[NSUserDefaults standardUserDefaults] stringForKey:@"UNLOCK"];
         if([conetnt isEqualToString:lockKeyword] && !self.bScreenLocked){
             NSLog(@"lock screen!");
-            NSAppleScript *locker = [[NSAppleScript alloc] initWithSource:lockScript];
-            [locker executeAndReturnError:nil];
+            SACLockScreenImmediate();
+            //10.10-10.12
+            //NSBundle *bundle = [NSBundle bundleWithPath:@"/Applications/Utilities/Keychain Access.app/Contents/Resources/Keychain.menu"];
+            //Class principalClass = [bundle principalClass];
+            //id instance = [[principalClass alloc] init];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+            //[instance performSelector:NSSelectorFromString(@"_lockScreenMenuHit:") withObject:nil];
+#pragma clang diagnostic pop
+            sleep(3);
         }
         else if ([conetnt isEqualToString:unlockKeyword] && self.bScreenLocked){
             NSLog(@"unlock screen!");
@@ -285,11 +290,11 @@ void *kContextActivePanel = &kContextActivePanel;
 //                                    CFSTR(kIOPMAutoWake));
             
                 
-            // 10.10-10.11 can work for wake up with out privileges..
+            // 10.10-10.12 can work for wake up with out privileges..
             IOPMAssertionID assertionID;
             IOPMAssertionDeclareUserActivity(CFSTR("AirUnlock"), kIOPMUserActiveLocal, &assertionID);
             sleep(1);
-            NSString *unlockScript = [NSString stringWithFormat:unlockScriptBase, self.panelController.keyChain_passwordData];
+            NSString *unlockScript = [NSString stringWithFormat:@"tell application \"System Events\" \nkeystroke \"%@\" \nkeystroke return \nend tell", self.panelController.keyChain_passwordData];
             NSAppleScript *unlocker = [[NSAppleScript alloc] initWithSource:unlockScript];
             //NSLog(unlockScript);
             [unlocker executeAndReturnError:nil];

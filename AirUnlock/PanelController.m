@@ -265,7 +265,7 @@
     [defaults setObject:unlockKeyword forKey:@"UNLOCK"];
     
     NSString *encodeString =[NSString stringWithFormat:@"%@,%@,%@", btAddress, unlockKeyword, lockKeyword];
-    NSLog(encodeString);
+    NSLog(@"%@", encodeString);
     
     NSError *error = nil;
     ZXMultiFormatWriter *writer = [ZXMultiFormatWriter writer];
@@ -283,7 +283,7 @@
         
     } else {
         NSString *errorMessage = [error localizedDescription];
-        NSLog(errorMessage);
+        NSLog(@"%@", errorMessage);
     }
     
     
@@ -295,6 +295,7 @@
 
 
 -(void)showUpdatePasswordDialog{
+    [NSApp activateIgnoringOtherApps:YES];
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText:@"Password will save in System Keychain"];
     [alert addButtonWithTitle:@"Save"];
@@ -306,50 +307,48 @@
     [input setStringValue:@""];
     [alert setAccessoryView:input];
     [alert setIcon:[NSImage imageNamed:@"mbp-un"]];
+    [[alert window] setInitialFirstResponder:input];
     
-    [[self window] makeFirstResponder:input];
     NSInteger button = [alert runModal];
-    [[self window] makeFirstResponder:self];
     if (button == NSAlertFirstButtonReturn && [input.stringValue length]!=0 ) {
         self.keyChain_passwordData = input.stringValue;
         SecKeychainItemRef itemRef = NULL;
         // to check password is exist?
         OSStatus status = SecKeychainFindGenericPassword(self.keychain,
-                                                         (int)[self.keyChain_serviceName lengthOfBytesUsingEncoding:NSUTF8StringEncoding] ,
+                                                         (UInt32)[self.keyChain_serviceName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
                                                          self.keyChain_serviceName.UTF8String,
-                                                          (int)[self.keyChain_accountName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+                                                         (UInt32)[self.keyChain_accountName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
                                                          self.keyChain_accountName.UTF8String,
                                                          NULL,NULL,
                                                          &itemRef);
         if(status == noErr){ // exist - modify it
             OSStatus ModifStatus = SecKeychainItemModifyAttributesAndData (itemRef,
                                                                            NULL,
-                                                                           self.keyChain_passwordData.length,
-                                                                           self.keyChain_passwordData.cString);
+                                                                           (UInt32)[self.keyChain_passwordData lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+                                                                           self.keyChain_passwordData.UTF8String);
             if(ModifStatus == noErr){
-                NSLog(@"Passowd saved");
+                NSLog(@"Password saved");
             }
             
             else
-                NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
+                NSLog(@"%@", (__bridge_transfer NSString *)SecCopyErrorMessageString(status, NULL));
         }
         else if (status == errSecItemNotFound){ // not exist - add it
             OSStatus status= SecKeychainAddGenericPassword(self.keychain,
-                                                           (int)[self.keyChain_serviceName lengthOfBytesUsingEncoding:NSUTF8StringEncoding] ,
+                                                           (UInt32)[self.keyChain_serviceName lengthOfBytesUsingEncoding:NSUTF8StringEncoding] ,
                                                            self.keyChain_serviceName.UTF8String,
-                                                           (int)[self.keyChain_accountName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+                                                           (UInt32)[self.keyChain_accountName lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
                                                            self.keyChain_accountName.UTF8String,
-                                                           (int)[self.keyChain_passwordData lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+                                                           (UInt32)[self.keyChain_passwordData lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
                                                            self.keyChain_passwordData.UTF8String,
-
                                                            NULL);
             if(status == noErr)
-                NSLog(@"Passowd saved");
+                NSLog(@"Password saved");
             else
-                NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
+                NSLog(@"%@", (__bridge_transfer NSString *)SecCopyErrorMessageString(status, NULL));
         }
         else
-            NSLog((__bridge NSString *)SecCopyErrorMessageString(status, NULL));
+            NSLog(@"%@", (__bridge_transfer NSString *)SecCopyErrorMessageString(status, NULL));
         
         
     }

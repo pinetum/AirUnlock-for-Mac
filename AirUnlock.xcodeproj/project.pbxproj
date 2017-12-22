@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		728D7D051D30DED500A88EAB /* IOBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 728D7D031D30D47E00A88EAB /* IOBluetooth.framework */; };
+		49A58E1B1FE744E400DD5980 /* login.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49A58E1A1FE744E400DD5980 /* login.framework */; };
 		728D85201D30A56900C8675E /* mbp-un.png in Resources */ = {isa = PBXBuildFile; fileRef = 728D851F1D30A56900C8675E /* mbp-un.png */; };
 		728D85241D30BF9500C8675E /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 728D85231D30BF9500C8675E /* CoreBluetooth.framework */; };
 		729CBE1E1D31F48F00EAB98E /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 729CBE181D31E37700EAB98E /* ServiceManagement.framework */; };
@@ -35,6 +36,7 @@
 		145A28ADA70E3B041FBCBDFC /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		2B0FD4C51538A64F84C7D2AC /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		728D7D031D30D47E00A88EAB /* IOBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOBluetooth.framework; path = System/Library/Frameworks/IOBluetooth.framework; sourceTree = SDKROOT; };
+		49A58E1A1FE744E400DD5980 /* login.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = login.framework; path = ../../../../System/Library/PrivateFrameworks/login.framework; sourceTree = "<group>"; };
 		728D851F1D30A56900C8675E /* mbp-un.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "mbp-un.png"; path = "AirUnlock/mbp-un.png"; sourceTree = "<group>"; };
 		728D85211D30AED300C8675E /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		728D85231D30BF9500C8675E /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
@@ -76,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49A58E1B1FE744E400DD5980 /* login.framework in Frameworks */,
 				729CBE1E1D31F48F00EAB98E /* ServiceManagement.framework in Frameworks */,
 				72E38A251D3133A30013CB93 /* IOKit.framework in Frameworks */,
 				728D7D051D30DED500A88EAB /* IOBluetooth.framework in Frameworks */,
@@ -120,6 +123,7 @@
 		DD4F7C0713C30F9F00825C6E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				49A58E1A1FE744E400DD5980 /* login.framework */,
 				729CBE181D31E37700EAB98E /* ServiceManagement.framework */,
 				72E38A241D3133A30013CB93 /* IOKit.framework */,
 				728D7D031D30D47E00A88EAB /* IOBluetooth.framework */,
@@ -436,6 +440,10 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AirUnlock/AirUnlock-Prefix.pch";
 				INFOPLIST_FILE = "AirUnlock/AirUnlock-Info.plist";
@@ -453,6 +461,10 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AirUnlock/AirUnlock-Prefix.pch";
 				INFOPLIST_FILE = "AirUnlock/AirUnlock-Info.plist";
